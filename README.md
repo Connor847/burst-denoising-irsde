@@ -1,4 +1,4 @@
-# burst-denoising-irsde
+# Burst Denoising IR-SDE
 
 An empirical study of burst-conditioned score function estimation in diffusion-based low-light image restoration. We modify [IR-SDE](https://github.com/Algolzw/image-restoration-sde) to accept N burst frames as additional conditioning at each reverse diffusion step, and evaluate whether burst count affects denoising quality on the [SID dataset](https://cchen156.github.io/SID.html).
 
