@@ -166,11 +166,10 @@ def main():
                 burst = batch['LQ'].to(device)
                 gt    = batch['GT'].to(device)
 
-                # TODO (future work): replace randn with burst mean as SDE start
-                # B, C, H, W = burst.shape
-                # sde_start = burst.reshape(B, C//3, 3, H, W).mean(dim=1)
-                noisy_gt_val = torch.randn_like(gt)
-                combined_val = torch.cat([noisy_gt_val, burst], dim=1)
+                B, C, H, W = burst.shape
+                n_frames = C // 3
+                burst_mean = burst.reshape(B, n_frames, 3, H, W).mean(dim=1)  # [B, 3, H, W]
+                combined_val = torch.cat([burst_mean, burst], dim=1)
 
                 model.feed_data(combined_val, gt)
                 model.test(sde, sigma=opt['degradation']['sigma'])

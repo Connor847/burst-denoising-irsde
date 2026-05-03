@@ -166,15 +166,16 @@ def main():
         with torch.no_grad():
             # N=1 inference
             # TODO (future work): replace randn with burst mean
-            sde_start_n1 = torch.randn_like(gt_t)
-            combined_n1  = torch.cat([sde_start_n1, b1], dim=1)
+            burst_mean_n1 = b1  # already 3 channels for N=1
+            combined_n1   = torch.cat([burst_mean_n1, b1], dim=1)
             model_n1.feed_data(combined_n1, gt_t)
             model_n1.test(sde_n1, sigma=opt_n1['degradation']['sigma'])
             output_n1 = tensor2img(model_n1.get_current_visuals()['Output'])
 
             # N=2 inference
-            sde_start_n2 = torch.randn_like(gt_t)
-            combined_n2  = torch.cat([sde_start_n2, b2], dim=1)
+            burst_mean_n2 = (to_tensor(b_patches[0], device) +
+                 to_tensor(b_patches[1], device)) / 2  # [B, 3, H, W]
+            combined_n2   = torch.cat([burst_mean_n2, b2], dim=1)
             model_n2.feed_data(combined_n2, gt_t)
             model_n2.test(sde_n2, sigma=opt_n2['degradation']['sigma'])
             output_n2 = tensor2img(model_n2.get_current_visuals()['Output'])
